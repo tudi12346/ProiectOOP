@@ -2,49 +2,77 @@ package com.accommodation.service;
 
 import java.util.List;
 
+import javax.swing.table.DefaultTableModel;
+
 import com.accommodation.model.Camin;
 import com.accommodation.repository.CaminRepository;
 
 public class CaminService implements Service<Camin> {
 
-	private CaminRepository caminRepository= new CaminRepository();
-	
+	private CaminRepository caminRepository = new CaminRepository();
+
 	@Override
 	public Camin save(Camin entity) {
-		// TODO Auto-generated method stub
 		return caminRepository.save(entity);
 	}
 
 	@Override
 	public Camin findById(Long id) {
-		// TODO Auto-generated method stub
 		return caminRepository.findById(id);
 	}
 
 	@Override
 	public List<Camin> findAll() {
-		// TODO Auto-generated method stub
 		return caminRepository.findAll();
 	}
 
 	@Override
 	public boolean delete(Camin entity) {
-		// TODO Auto-generated method stub
 		return caminRepository.delete(entity);
 	}
 
 	@Override
 	public boolean deleteById(Long id) {
-		// TODO Auto-generated method stub
 		return caminRepository.deleteById(id);
 	}
-	
-	public List<Camin> findByAdmin(String admin){
+
+	public List<Camin> findByAdmin(String admin) {
 		return caminRepository.findByAdmin(admin);
 	}
-	
-	public List<Camin> findByAdress(String adress){
+
+	public List<Camin> findByAdress(String adress) {
 		return caminRepository.findByAdress(adress);
+	}
+
+	public Camin findByNumber(Integer number) {
+		return caminRepository.findByNumber(number);
+	}
+
+	public DefaultTableModel caminToTableModel(List<Camin> camine) {
+		String[] columns = { "number", "admin", "adress", "roomCount" };
+		String[][] tuple = new String[camine.size()][columns.length];
+		int i = 0;
+		for (Camin camin : camine) {
+			tuple[i][0] = camin.getNumber().toString();
+			tuple[i][1] = camin.getAdmin();
+			tuple[i][2] = camin.getAdress();
+			tuple[i][3] = camin.getRoomCount().toString();
+			i++;
+		}
+		DefaultTableModel model = new DefaultTableModel(tuple, columns);
+		return model;
+	}
+
+	public boolean isInteger(String s) {// daca cineva vede asta vreodata, imi pare rau...... :( :( :(
+		try {
+			Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return false;
+		} catch (NullPointerException e) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

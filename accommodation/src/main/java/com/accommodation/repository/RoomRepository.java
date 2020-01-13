@@ -2,8 +2,6 @@ package com.accommodation.repository;
 
 import java.util.List;
 
-import javax.swing.table.DefaultTableModel;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,21 +10,21 @@ import org.hibernate.criterion.Restrictions;
 import com.accommodation.model.Room;
 import com.accommodation.service.HibernateService;
 
-public class RoomRepository implements Repository<Room>{
+public class RoomRepository implements Repository<Room> {
 
 	@Override
 	public Room save(Room entity) {
-		try{
+		try {
 			Session databaseSession = HibernateService.getSessionFactory().openSession();
 			databaseSession.beginTransaction();
 			databaseSession.saveOrUpdate(entity);
 			databaseSession.save(entity);
 			databaseSession.getTransaction().commit();
 			databaseSession.close();
-			}catch(HibernateException ex) {
-				ex.printStackTrace();
-			}
-			return entity;
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
+		return entity;
 	}
 
 	@Override
@@ -36,57 +34,66 @@ public class RoomRepository implements Repository<Room>{
 		databaseSession.close();
 		return found;
 	}
-	
-	public List<Room> findEmpltyRooms(){
+
+	public List<Room> findEmptyRooms() {
 		Session databaseSession = HibernateService.getSessionFactory().openSession();
-		databaseSession.beginTransaction();
-		Query query=databaseSession.createQuery("from com.scheduler.backend.model.Room R where R.studentsNr = 0");
+		Query query = databaseSession.createQuery("from com.accommodation.model.Room R where R.studentsNumber = 0");
 		@SuppressWarnings("unchecked")
-		List<Room> result =query.list();
+		List<Room> result = query.list();
 		databaseSession.close();
 		return result;
 	}
-	
-	public List<Room> findNotFullRooms(){
+
+	public List<Room> findNotFullRooms() {// nu se stie inca
 		Session databaseSession = HibernateService.getSessionFactory().openSession();
-		databaseSession.beginTransaction();
-		@SuppressWarnings("unchecked")
-		List <Room> result=(List<Room>) databaseSession.createCriteria(Room.class).add(Restrictions.ne("studentsNr", new Integer(4))).list();
+		@SuppressWarnings({ "unchecked" })
+		List<Room> result = (List<Room>) databaseSession.createCriteria(Room.class)
+				.add(Restrictions.ne("studentsNumber", 4)).list();//posibila problema
+		databaseSession.close();
 		return result;
 	}
-	
-	public DefaultTableModel roomToTableModel( List<Room> rooms ) {
-		String[] columns= {"RoomNumber","NrStudents","Orientation"};
-		String[][] tuple = new String[rooms.size()][columns.length] ;
-		int i=0;
-		for(Room room:rooms){
-			tuple[i][0] = room.getRoomNumber().toString();
-			tuple[i][1] = room.getStudentsNumber().toString();
-			tuple[i][2] = room.getOrientation();
-			i++;
-		}
-		DefaultTableModel model = new DefaultTableModel(tuple,columns);		
-		return model;
-	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Room> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Session databaseSession = HibernateService.getSessionFactory().openSession();
+		Query query = databaseSession.createQuery("from com.accommodation.model.Room C");
+		List<Room> result = query.list();
+		databaseSession.close();
+		return result;
 	}
 
 	@Override
 	public boolean delete(Room entity) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			Session databaseSession = HibernateService.getSessionFactory().openSession();
+			databaseSession.beginTransaction();
+			databaseSession.delete(entity);
+			databaseSession.getTransaction().commit();
+			databaseSession.close();
+
+			return true;
+		} catch (HibernateException e) {
+
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
 	public boolean deleteById(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		Session databaseSession = HibernateService.getSessionFactory().openSession();
+		databaseSession.beginTransaction();
+		Room found = (Room) databaseSession.get(Room.class, id);
+		if (found != null) {
+			databaseSession.delete(found);
+			databaseSession.getTransaction().commit();
+		}
+		databaseSession.close();
+		if (found != null)
+			return true;
+		else
+			return false;
 	}
-
-	
 
 }

@@ -98,23 +98,29 @@ public class RegisterWindow {
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UserService userService = new UserService();
-				String username=usernameField.getText();
-				String password=passwordField.getText();
-				String email=emailField.getText();
-				String name=nameField.getText();
+				String username = usernameField.getText();
+				String password = passwordField.getText();
+				String email = emailField.getText();
+				String name = nameField.getText();
 				User existing = userService.findByUserName(username);
-				if (existing!= null && existing.getUserName().equals(username))
+				if (existing != null && existing.getUserName().equals(username))
 					JOptionPane.showMessageDialog(null, "Username already in use.Please choose another username");
 				else {
-					User nou = new User();
-					nou.setEmail(email);
-					nou.setName(name);
-					nou.setPassword(password);
-					nou.setUserName(username);
-					userService.save(nou);
-					JOptionPane.showMessageDialog(null, "New user created successfully");
-					registerFrame.setVisible(false);
-					registerFrame.dispose();
+					existing = userService.findByEmail(email);
+					if (existing != null && existing.getEmail().equals(email))
+						JOptionPane.showMessageDialog(null,
+								"Email adress already in use.Please choose another email adress");
+					else {
+						User nou = new User();
+						nou.setEmail(email);
+						nou.setName(name);
+						nou.setPassword(password);
+						nou.setUserName(username);
+						userService.save(nou);
+						JOptionPane.showMessageDialog(null, "New user created successfully");
+						registerFrame.setVisible(false);
+						registerFrame.dispose();
+					}
 				}
 			}
 		});

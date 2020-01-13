@@ -94,9 +94,9 @@ public class LoginWindow {
 			public void actionPerformed(ActionEvent arg0) {
             	UserService userService= new UserService();
         
-                User nou= new User();
-                nou=userService.findByCredentials(usernameField.getText(), passwordField.getText());
-                if (nou!=null)
+                User user= new User();
+                user=userService.findByCredentials(usernameField.getText(), passwordField.getText());
+                if (user!=null)
                 {
                 	JOptionPane.showMessageDialog(null,"Logged in");
                 	ManagementWindow managementWindow= new ManagementWindow();
